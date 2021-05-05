@@ -1,4 +1,7 @@
-
+'''
+Solution for problem 1.3 in Cracking the Coding Interview
+URLify_Brute implements brute force solution that copies strings a lot. Could be optimized for speed/memory.
+'''
 
 def URLify_Brute(strg, len):
     words = []
