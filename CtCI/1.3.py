@@ -51,5 +51,9 @@ def URLify_instring(barr, leng):
 #Testing
 teststr = "Mr John Smith    "
 testlen = 13
-print(URLify_Brute(teststr,testlen))
-print( URLify_instring(bytearray(teststr, 'utf-8'), testlen) )
+outputstr = "Mr%20John%20Smith"
+assert (URLify_Brute(teststr,testlen) == outputstr)
+
+testbytearr = bytearray(teststr, 'ascii')
+outputbytearr = bytearray('Mr%20John%20Smith', 'ascii')
+assert URLify_instring(testbytearr, testlen)  == outputbytearr
