@@ -8,7 +8,7 @@ class sllnode:
         self.data = data
         self.next = None
 
-
+# Simple implementation that finds the length of linked list, n, then iterates n-k times
 def kth_to_last(h, k):
     # iterate thourgh linked list to find length
     iter = h
@@ -24,8 +24,9 @@ def kth_to_last(h, k):
         iter = iter.next
     return iter
 
+# More efficient solution that uses a "runner"- two pointers k nodes apart, where the closer node 
+# is on the n-kth element when the further nodes is on the last element
 def kth_to_last_efficient(h, k):
-    #Idea: have two pointers k nodes apart, and the closer pointer will be on n-kth element when further pointer is at last element
     iter1 = h
     iter2 = h
     c = 1
