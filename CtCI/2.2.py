@@ -24,6 +24,19 @@ def kth_to_last(h, k):
         iter = iter.next
     return iter
 
+def kth_to_last_efficient(h, k):
+    #Idea: have two pointers k nodes apart, and the closer pointer will be on n-kth element when further pointer is at last element
+    iter1 = h
+    iter2 = h
+    c = 1
+    while(c < k):
+        iter1 = iter1.next
+        c += 1
+    while(iter1.next != None):
+        iter1 = iter1.next
+        iter2 = iter2.next
+    return iter2
+
 def populatell(nodes):
     c = 1
     h = sllnode(c)
@@ -38,3 +51,4 @@ def populatell(nodes):
 #Test kth_to_last
 h  = populatell(111)
 assert kth_to_last(h, 39).data == 72
+assert kth_to_last_efficient(h, 39).data == 72
