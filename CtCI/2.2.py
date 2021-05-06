@@ -1,4 +1,7 @@
-
+'''
+Solution for problem 2.2 in Cracking the Coding Interview.
+kth_to_last returns the kth to last node of a linked list.
+'''
 
 class sllnode:
     def __init__(self, data):
