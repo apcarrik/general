@@ -1,4 +1,8 @@
-
+'''
+Solution for problem 3.5 in Cracking the Coding Interview
+sortStack takes an input stack with methods push, pop, peek, and isEmpty, and returns the stack with the elements ordered
+    smallest on top. This is done using only one other stack, and no other data structures.
+'''
 
 class stack:
     def __init__(self):
@@ -41,7 +45,7 @@ class stnode:
         self.data = item
         self.next = None
 
-
+# Implements stack sorting using only an additional stack and no other data structures
 def sortStack(s1):
     s2 = stack()
 
