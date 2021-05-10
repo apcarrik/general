@@ -19,10 +19,12 @@ class queue:
             self.tail = newnode
         else:
             oldtail = self.tail
-            oldtail.nexty = qnode(data)
+            newnode = qnode(data)
+            oldtail.next = newnode
             self.tail = newnode
     def dequeue(self):
         if(self.head == None and self.tail == None): #Queue empty
+            print("dequeue error")
             return None #TODO change this to throw error
         else:
             oldhead = self.head
@@ -32,19 +34,52 @@ class queue:
             return oldhead.data
     def isempty(self):
         return True if(self.head == None and self.tail == None) else False
+    def printqueue(self): # For debugging
+        print("Queue contents:")
+        tmp = self.head
+        while(tmp != None):
+            print(tmp.data, " , ", tmp.next)
+            tmp = tmp.next
 
 
 def checkBalanced(bt, root):
     # Idea: perform BFS starting at root node, and keep track of longest and shortest path (high/low water marks)
-    #TODO: implement
-    return False # Or True
+    lowwater = -1
+    highwater = 0
+    nodeq = queue()
+    depthq = queue()
+    pnodeq = queue()
+    nodeq.enqueue(root)
+    depthq.enqueue(1)
+    pnodeq.enqueue(None)
+    watchdog = 0
+    while(nodeq.isempty() == False and watchdog < 100):
+        watchdog +=1
+        currentnode = nodeq.dequeue()
+        depth = depthq.dequeue()
+        parent = pnodeq.dequeue()
+        if(bt[currentnode] == [parent]):
+            if(lowwater > depth or lowwater == -1):
+                lowwater = depth
+            if(highwater < depth):
+                highwater = depth
+        else:
+            for child in bt[currentnode]:
+                if(parent == None or child != parent):
+                    nodeq.enqueue(child)
+                    depthq.enqueue(depth+1)
+                    pnodeq.enqueue(currentnode)           
+    if(highwater-lowwater > 1):
+        return False
+    else:
+        return True
 
 def makebt(balanced):
     # creates a binary tree, either balanced or not
     if(balanced):
-        return [[2,3],[1,4,5],[1,6,7],[2,8],[2],[3,9],[3],[4],[6]]
+        return [[],[2,3],[1,4,5],[1,6,7],[2,8],[2],[3,9],[3],[4],[6]]
     else:
-        return [[2,3],[1,4,5],[1],[2,6],[2],[4]]
+        return [[],[2,3],[1,4,5],[1],[2,6],[2],[4]]
 
 
 assert checkBalanced(makebt(True),1) == True
