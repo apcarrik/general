@@ -1,6 +1,7 @@
 '''
 Solution for problem 5.1 in Cracking the Coding Interview
-checkBalanced takes an input binary tree and checks if it is balanced.
+bitInsertion takes two 32-bit numbers M and N, and two integers < 32, i and j, and returns a value equal to
+N with M insterted into the bits from j to i.
 '''
 
 def bitInsertion(N,M,i,j):
