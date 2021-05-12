@@ -22,4 +22,9 @@ def bitInsertion(N,M,i,j):
     # Out
     return Nprime + Mprime
 
-#TODO test this
+inputN = int('10000000000',2)
+inputM = int('10011',2)
+inputi = 2
+inputj = 6
+expectedoutput = int('10001001100',2)
+assert bitInsertion(inputN, inputM, inputi, inputj) == expectedoutput
