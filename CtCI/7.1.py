@@ -40,7 +40,6 @@ class cardDeck:
             return False
 
         # Shuffle deck
-        #TODO: Implement shuffle on targetpile
         np.random.shuffle(targetpile)
         return True
 
