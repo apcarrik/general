@@ -2,6 +2,7 @@
 Solution for problem 7.1 in Cracking the Coding Interview
 Implements a deck of cards for blackjack.
 '''
+import numpy as np
 
 # class card implements a single playing card
 class card:
@@ -12,13 +13,13 @@ class card:
 # class cardDeck implements a standard 52-card playing card deck
 class cardDeck:
     def __init__(self): # Start with full draw pile, empty discard pile
-        self.drawpile = newdeck(self)
+        self.drawpile = self.newdeck()
         self.discardpile = [None] * len(self.drawpile)
 
     # newdeck returns a new deck in cannonical order
     def newdeck(self):
         suits = ["Clubs", "Diamonds", "Hearts", "Spades"]
-        values = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "Jack", "Queen", "King"]
+        values = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"]
         deck = [None]*(len(suits) * len(values))
         i=0
         for suit in suits:
@@ -39,7 +40,8 @@ class cardDeck:
             return False
 
         # Shuffle deck
-        #TODO: Implement shuffle on shuffle pile
+        #TODO: Implement shuffle on targetpile
+        np.random.shuffle(targetpile)
         return True
 
     # drawfrom draws a card from the specified deck. Returns the drawn card if there are no errors, False otherwise.
@@ -51,7 +53,7 @@ class cardDeck:
             targetpile = self.discardpile
         else:
             print("Draw error: Pile type not defined")
-            return False
+            return None
 
         # Draw card
         if(targetpile[0] == None):
@@ -61,6 +63,7 @@ class cardDeck:
             targetpile[i-1] = targetpile[i]
             if(targetpile[i] == None):
                 break
+        targetpile[51] = None
         return drawcard
 
     # placeonto places specified card onto specified deck. Returns True if no errors, False otherwise
@@ -88,3 +91,66 @@ class cardDeck:
                     break
         return True
 
+# test_card runs tests on card class
+def test_card():
+    newcard = card("Diamonds","Jack")
+    assert newcard.suit == "Diamonds"
+    assert newcard.value == "Jack"
+
+    newcard = card("asdf","fdsa")
+    assert newcard.suit != "Diamonds"
+    assert newcard.value != "Jack"
+    assert newcard.suit == "asdf"
+    assert newcard.value == "fdsa"
+
+# test_cardDeck runs tests on carddeck class
+def test_cardDeck():
+    # Test new deck has full draw pile and empty discard pile
+    ndeck = cardDeck()
+    assert len(ndeck.drawpile) == 52
+    assert ndeck.drawpile[0] != None
+    assert ndeck.drawpile[51] != None
+    assert len(ndeck.discardpile) == 52
+    assert ndeck.discardpile[0] == None
+    assert ndeck.discardpile[51] == None
+
+    # Test shuffle - ensure that not every card is in the same position in the deck after shuffling
+    comparedeck = [None]*len(ndeck.drawpile)
+    i=0
+    for tcard in ndeck.drawpile:
+        comparedeck[i] = tcard
+        i+=1
+    ndeck.shuffle("draw")
+    allsame = True
+    i=0
+    for tcard in ndeck.drawpile:
+        if(comparedeck[i] != tcard):
+            allsame = False
+        i+=1
+    assert allsame == False
+
+    # Test drawfrom - ensure that, after a card is drawn from the deck, no card in the deck has the same suit/value
+    decksize = len(ndeck.drawpile)
+    drawncard = ndeck.drawfrom("draw")
+    assert drawncard != None
+    # assert decksize == len(ndeck.drawpile) + 1
+    for tcard in ndeck.drawpile:
+        if(tcard != None):
+            assert (drawncard.suit != tcard.suit or drawncard.value != tcard.value)
+
+    # Test placeonto - ensure that, after a card is placed onto the deck, that that card is in the deck
+    decksize = len(ndeck.drawpile)
+    assert ndeck.placeonto("draw",drawncard) == True
+    # assert decksize == len(ndeck.drawpile) - 1
+    cardfound = False
+    for tcard in ndeck.drawpile:
+        if(tcard != None):
+            if (drawncard.suit == tcard.suit and drawncard.value == tcard.value):
+                cardfound = True
+    assert cardfound == True
+
+# Run unit tests
+test_card()
+test_cardDeck()
+
+# TODO: Implement blackjack
