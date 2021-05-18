@@ -16,20 +16,13 @@ def magicIndex(A):
                 difference = rightidx - leftidx
                 if (difference == 1):
                     break
-                elif(difference %2 == 0): # even distance
+                else:
                     midpoint = leftidx + (difference // 2)
                     if(midpoint <= A[midpoint]):
                         rightidx = midpoint
                     else:
                         leftidx = midpoint
-                else: # odd distance
-                    midpoint = leftidx + (difference // 2)
-                    if(midpoint >= A[midpoint]):
-                        leftidx = midpoint
-                    else:
-                        rightidx = midpoint+1
     else: # fn is strictly decreasing
-        #TODO: test this
         if(A[0]>=0 and A[n-1] <= n-1):
             leftidx = 0
             rightidx = n-1
@@ -39,21 +32,24 @@ def magicIndex(A):
                 difference = rightidx - leftidx
                 if(difference == 1):
                     break
-                elif(difference %2 == 0): # even distance
+                else:
                     midpoint = leftidx + (difference // 2)
                     if(midpoint <= A[midpoint]):
                         leftidx = midpoint
                     else:
                         rightidx = midpoint
-                else: # odd distance
-                    midpoint = leftidx + (difference // 2)
-                    if(midpoint >= A[midpoint]):
-                        rightidx = midpoint
-                    else:
-                        leftidx = midpoint+1
 
     return False
 
-# TODO: implement test for magicIndex
+# test magicIndex
 A = [-3,-2,-1,2,4,6,7,9]
 assert magicIndex(A) == True
+
+A = [-3,-2,-1]
+assert magicIndex(A) == False
+
+A = [9,7,2,0,-1,-2,-3,-4]
+assert magicIndex(A) == True
+
+A = [-1,-2,-3]
+assert magicIndex(A) == False
