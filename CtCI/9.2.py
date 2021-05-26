@@ -14,7 +14,7 @@ def addToDatabase():
 def searchProfileName(profileID):
     return ""
 
-# TODO: decide what data structure to use for people & social network
+# Data structures for people & social network
 
 class Profile:
     def __init__(self, name):
@@ -46,13 +46,52 @@ class Profile:
     def getFriendIds(self):
         return self.friends
 
+# Queue structure for friendqueue
+class friendNode:
+    def __init__(self, data, friends):
+        self.data = data
+        self.friends = friends
+        self.next = None
 
-#TODO: create queue structure for friendqueue
+    def setNext(self, nextNode):
+        self.next = nextNode
+
+class friendQueue:
+    def __init__(self):
+        self.head = None
+
+    def isEmpty(self):
+        return True if self.head != None else False
+
+    def add(self, item, friends):
+        newnode = friendNode(item, friends)
+        if(self.head == None):
+            self.head = newnode
+        else:
+            nextnode = self.head
+            while (nextnode.next != None):
+                nextnode = nextnode.next
+            nextnode.setNext(newnode)
+
+    def pop(self):
+        retnode = self.head
+        self.head = self.head.next
+        return retnode.data, retnode.friends
 
 # shortestFriendPath finds the least number of people between two profiles in a given social network
 def shortestFriendPath(profileId1, profileId2):
-    # TODO: Implement
-
+    # Perform BFS on first profile friends, checking if 2nd profile is there. If not, repeat for all
+    # friends of first profile, recursively, keeping track of friend path up to that point
+    friendpath = [profileId1]
+    friendqueue = friendQueue()
+    friendqueue.add(profileId1, friendpath)
+    while(~friendqueue.isEmpty()):
+        friendId, friendpath = friendqueue.pop()
+        if(friendId == profileId2):
+            return friendpath.append[profileId2]
+        else:
+            friendqueue.add(friendId,friendpath.append(friendId))
+    return None
 
 # Testing shortestPath
 # TODO: create tests for shortestPath
