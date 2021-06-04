@@ -1,5 +1,12 @@
 '''
 Solution for problem 10.2 in Cracking the Coding Interview
+
+The function groupAnagrams takes a list of strings and returns a list of the same strings in an order with anagrams
+next to each other. No other ordering is made, except the first of an anagram group is listed in the order it was
+recieved, save for any previous anagrams that are moved before it.
+
+This solution uses a hash function to find anagrams that uses a (moderatley small) set of random primes to avoid hash
+collisions, however it does include collision protection.
 '''
 import random
 
@@ -60,34 +67,56 @@ def randomSamplePrimes(num):
     return random.sample(primeslist, num)
 
 # createStringHash creates a hash based on the number of each character in string
-def createStringHash(str,charhashvalues):
+def createStringHash(st,charhashvalues):
     # Idea: hash function could be: assign a unique prime to each character, and make the hash function be the sum of
     # each character's associated prime times the count of that character
     hashval = 0
-    lettercounts = [0 * 26]
+    lettercounts = [0 ]* 26
     alphabet = list('abcdefghijklmnopqrstuvwxyz')
     for i,letter in enumerate(alphabet):
-        lettercount = str.count(letter)
+        lettercount = st.count(letter)
         lettercounts[i] = lettercount
         hashval += charhashvalues[i]*lettercount
-    return hashval, lettercounts #TODO: Test this
+    return hashval, lettercounts
 
 # groupAnagrams takes an array of strings and sorts with anagrams next to one another
 # assumes anagrams can have arbitrary spaces (spaces do not count as characters)
 def groupAnagrams(strs):
     # Idea: create a hash table based on character counts, return all with the same character count together
-    strhashes = [] #TODO: may want this to be a dictionary actually
+    strhashes = {}
+    lettercountarr = []
     charhashvalues = randomSamplePrimes(26)
-    for str in strs:
-        str = str.strip(" ")
-        strhash, lettercounts = createStringHash(str,charhashvalues)
-        # TODO: implement logic to add to hash/detect collisions
+    for st in strs:
+        strhash, lettercount = createStringHash(st.strip(" ").lower(),charhashvalues)
+        if strhash in strhashes:
+            # check if lettercounts match
+            lcfound = False
+            for lcid, lc in enumerate(lettercountarr):
+                if lettercount == lc:#strings are anagrams
+                    lcfound = True
+                    strhashes[strhash][lcid].append(st)
+                    break
+            if not lcfound:
+                # strings are not anagrams
+                strhashes[strhash][lcid] = [st]
+        else:
+            lettercountarr.append(lettercount)
+            strhashes[strhash] = {(len(lettercountarr)-1): [st]}
 
-
-    return strs
-
+    # Now, go through all strings in order of hash and create new string array with the new ordering
+    retstrs = []
+    for strhash in strhashes:
+        for lc in strhashes[strhash]:
+            for st in strhashes[strhash][lc]:
+                retstrs.append(st)
+    return retstrs
 
 # Test cases
+# test createStringHash
+charhashvalues = randomSamplePrimes(26)
+assert createStringHash("Slot machines".strip(" ").lower(),charhashvalues) == createStringHash("Cash lost in me".strip(" ").lower(),charhashvalues)
+
+# test groupAnagrams
 testinput = ["Dormitory","Twelve plus one",
 "School master","Here come dots",
 "Conversation","Real fun",
@@ -101,15 +130,32 @@ testinput = ["Dormitory","Twelve plus one",
 "Slot machines","Voices rant on",
 "Fourth of July","Cash lost in me"]
 expectedoutput = ["Dormitory","Dirty room",
+"Twelve plus one","Eleven plus two",
 "School master","The classroom",
+"Here come dots","The Morse Code",
 "Conversation","Voices rant on",
+"Real fun","Funeral",
 "Listen","Silent",
+"Joyful Fourth","Fourth of July",
 "Astronomer","Moon starer",
 "The eyes","They see",
 "A gentleman","Elegant man",
-"Funeral","Real fun",
-"The Morse Code","Here come dots",
-"Eleven plus two","Twelve plus one",
-"Slot machines","Cash lost in me",
-"Fourth of July","Joyful Fourth"]# may need to change this order based on hash function
-assert groupAnagrams(testinput) == expectedoutput #may need to make function to test strings are the same
+"Slot machines","Cash lost in me"]
+
+#The following was the original ordering of strings, but since the output of groupAnagrams doesn't order besides keeping
+# anagrams next to one another, the expected output was changed
+
+# expectedoutput = ["Dormitory","Dirty room",
+# "School master","The classroom",
+# "Conversation","Voices rant on",
+# "Listen","Silent",
+# "Astronomer","Moon starer",
+# "The eyes","They see",
+# "A gentleman","Elegant man",
+# "Funeral","Real fun",
+# "The Morse Code","Here come dots",
+# "Eleven plus two","Twelve plus one",
+# "Slot machines","Cash lost in me",
+# "Fourth of July","Joyful Fourth"]# may need to change this order based on hash function
+
+assert groupAnagrams(testinput) == expectedoutput
