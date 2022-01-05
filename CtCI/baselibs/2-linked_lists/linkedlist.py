@@ -1,11 +1,11 @@
 # Singly Linked List
 class SLLNode:
-    def __init__(self, datum, next=None):
+    def __init__(self, datum, nxt=None):
         self.datum = datum
-        self.next = next
+        self.next = nxt
 
-    def set_next(self, next):
-        self.next = next
+    def set_next(self, nxt):
+        self.next = nxt
 
     def __repr__(self):
         return self.datum
