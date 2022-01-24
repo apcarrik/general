@@ -23,15 +23,15 @@ class Stack:
     def __iter__(self):
         node = self.current
         while node is not None:
-            yield node.datum
+            yield node
             node = node.prev
 
     def push(self, datum):
         if self.current is None:
             self.current = StackNode(datum)
         else:
-            self.current.next = StackNode(datum)
-            self.current = self.current.next
+            newnode = StackNode(datum, self.current)
+            self.current = newnode
         self.len += 1
 
     def pop(self):
