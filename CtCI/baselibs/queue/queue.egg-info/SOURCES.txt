@@ -1,0 +1,8 @@
+setup.py
+queue/__init__.py
+queue/queue.py
+queue.egg-info/PKG-INFO
+queue.egg-info/SOURCES.txt
+queue.egg-info/dependency_links.txt
+queue.egg-info/not-zip-safe
+queue.egg-info/top_level.txt
