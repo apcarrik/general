@@ -28,26 +28,29 @@ class Graph:
 
     def __init__(self, type='undirected', nodes={}):
         self.nodes = nodes
-        if self.type not in Graph.allowed_graph_types:
+        if type not in Graph.allowed_graph_types:
             raise RuntimeError(f"Graph type {type} is not supported.")
-        self.type=type
+        self.type = type
 
     def add_edge(self, n1, n2):
         self.nodes[n1].add_child(self.nodes[n2])
-        if self.type == "undirected":
-            self.nodes[n2].add_child(self.nodes[n1])
+        # if self.type == "undirected":
+        #     self.nodes[n2].add_child(self.nodes[n1])
 
     def remove_edge(self, n1, n2):
         self.nodes[n1].remove_child(self.nodes[n2])
         if self.type == "undirected":
             self.nodes[n2].remove_child(self.nodes[n1])
 
-    def add_node(self, name, datum=None, children=[]):
+    def add_node(self, name=None, datum=None, children=[]):
         new_node = GraphNode(datum, [self.nodes[child] for child in children])
+        if name is None:
+            name = len(self.nodes.keys())+1
         self.nodes[name] = new_node
         if self.type == "undirected":
             for child_name in children:
                 self.nodes[child_name].add_child(new_node)
+        return name
 
     def remove_node(self, name):
         adjacency_list = self.nodes[name].get_children()
@@ -57,6 +60,12 @@ class Graph:
                 if self.type == "undirected":
                     self.nodes[child_name].remove_child(self.nodes[name])
         self.nodes.pop(name)
+
+    def __repr__(self):
+        adjacency_list = f"graph_type:{self.type};\nNodes:\n"
+        for (name, node) in list(self.nodes.items()):
+            adjacency_list += f"name:{name}, datum:{repr(node)}, children:{node.get_children()};\n"
+        return adjacency_list
 
 # TODO: impelment basic tree
 class Tree:
