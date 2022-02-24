@@ -3,7 +3,6 @@
 # binary trees, binary (min) heap, and tries. The underlying graph will be stored in adjacency
 # list representation.
 
-# from queue.queue import QueueNode, Queue # Need to fix not finding these classes
 import pprint
 
 class GraphNode:
@@ -34,6 +33,9 @@ class Graph:
         if self.type == "undirected":
             self.adj_list[n2_id].remove(n1_id)
 
+    def get_edges(self, n_id):
+        return self.adj_list[n_id]
+
     def add_node(self, datum=None):
         new_node = GraphNode(datum)
         n_id = self.num_nodes
@@ -52,59 +54,31 @@ class Graph:
         pp = pprint.PrettyPrinter(indent=4)
         return pp.pformat(self.adj_list)
 
-# TODO: just redesigned graph, need to revisit tree
-class TreeNode(GraphNode):
-    def __init__(self, name, datum=None, children=[]):
-        super().__init__(self, datum=datum, children=children)
-        self.name = name
 
 class Tree(Graph):
-    # TODO: impelment basic tree
     def __init__(self, root=None):
         super().__init__(type="undirected")
         self.root = root
 
-    def add_edge(self):
+    def add_edge(self, *args):
         raise RuntimeError("Method 'add_edge' is not defined for Tree")
 
-    def remove_edge(self):
+    def remove_edge(self, *args):
         raise RuntimeError("Method 'remove_edge' is not defined for Tree")
 
-    def add_node(self, name, datum=None, parent_name=None):
-        new_node = TreeNode(name, datum, [])
+    def add_node(self, datum=None, parent_id=None):
+        n_id = super().add_node(datum)
         if self.root is None:
-            self.root=new_node
+            self.root=n_id
         else:
-            parent_node = self._bfs(parent_name)
-            if parent_node is None:
-                raise RuntimeError(f"Parent node '{parent_name}' could not be found in tree")
-            parent_node.add_child(new_node) # TODO: I think I want to add edges for graph representation
-        return name
+            # add edge to parent
+            super().add_edge(n_id,parent_id)
+        return n_id
 
-    def remove_node(self, name):
-        pass # TODO
-
-    # Implements breadth-first search to find the node pointer corresponding to the node name
-    def _bfs(self, node_name):
-        pass
-        # search_queue = Queue()
-        # search_queue.add(self.root)
-        # while len(search_queue) > 0:
-        #     n = search_queue.remove()
-        #     if n.name == node_name:
-        #         return n
-        #     for c in n.get_children():
-        #         search_queue.add(c)
-        # return None
-
-
-
-
-    def remove_node(self, name):
-        for n in self.nodes["name"].get_children():
-            self._remove_node_from_pointer(n)
-        super().remove_node(name=name)
-
+    def remove_node(self, rem_id):
+        super().remove_node(rem_id)
+        if rem_id == self.root:
+            self.root = None
 
     # TODO: implement binary tree
 

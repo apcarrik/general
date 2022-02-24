@@ -67,6 +67,15 @@ class TestGraph(unittest.TestCase):
         self.g4.remove_edge(0,1)
         self.assertEqual(repr(self.g4), "{0: set(), 1: set(), 2: {0}}")
 
+    def test_Graph_get_edges(self):
+        # test undirected graph
+        self.assertEqual(repr(self.g3.get_edges(0)), "{1}")
+        self.assertEqual(repr(self.g3.get_edges(1)), "{0}")
+
+        # test directed graph
+        self.assertEqual(repr(self.g4.get_edges(0)), "{1}")
+        self.assertEqual(repr(self.g4.get_edges(1)), "set()")
+
     def test_Graph_add_node(self):
         # test adding single node
         self.assertEqual(len(self.g1.nodes), 0)
@@ -101,7 +110,30 @@ class TestGraph(unittest.TestCase):
 class TestTree(unittest.TestCase):
 
     def setUp(self):
-        pass # TODO: Implement
+        self.T1 = Tree()
+        self.T2 = Tree()
+        self.T2.add_node("n1")
+        self.T2.add_node("n2", 0)
+
+    def test_Tree__init__(self):
+        self.assertIsNone(self.T1.root)
+        self.assertEqual(self.T1.type, "undirected")
+
+    def test_Tree_add_edge(self):
+        with self.assertRaises(RuntimeError):
+            self.T1.add_edge()
+
+    def test_Tree_remove_edge(self):
+        with self.assertRaises(RuntimeError):
+            self.T1.remove_edge()
+
+    def test_Tree_add_node(self):
+        self.assertEqual(repr(self.T1), "{}")
+        self.assertEqual(repr(self.T2), "{0: {1}, 1: {0}}")
+
+    def test_Tree_remove_node(self):
+        self.T2.remove_node(1)
+        self.assertEqual(repr(self.T2), "{0: set()}")
 
 if __name__ == '__main__':
     unittest.main()
