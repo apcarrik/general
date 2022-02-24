@@ -45,10 +45,10 @@ class TestQueue(unittest.TestCase):
         len1 = len(self.l1)
         self.l1.add("foo")
         self.assertTrue(len(self.l1)-len1 == 1)
-        self.assertTrue(repr(self.l1.remove())=="foo")
+        self.assertTrue(self.l1.remove()=="foo")
 
     def test_Queue_remove(self):
-        self.assertTrue(repr(self.l3.remove())==self.data[0])
+        self.assertTrue(self.l3.remove()==self.data[0])
 
     def test_Queue__len__(self):
         self.assertEquals(len(self.l1),0)
