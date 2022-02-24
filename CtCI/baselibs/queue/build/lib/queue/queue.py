@@ -4,7 +4,7 @@
 #   - peek(): Return the top of the stack.
 #   - isEmpty(): Return true if and only if the queue is empty.
 
-from linkedlist.linkedlist import SLLNode, SLL # Need to fix not finding these classes
+from linkedlist.linkedlist import SLLNode, SLL
 
 class QueueNode(SLLNode):
     def __init__(self, datum, nxt=None):
@@ -15,11 +15,11 @@ class Queue(SLL):
         super().__init__()
 
     def add(self, item):
-        SLL.append(self, item)
+        super().append(item)
 
     def remove(self):
         try:
-            return SLL.pop(self)
+            return super().pop().datum
         except RuntimeError as e:
             raise RuntimeError(str.replace(str(e), "linked list", "queue"))
 

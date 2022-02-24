@@ -3,22 +3,11 @@
 # binary trees, binary (min) heap, and tries. The underlying graph will be stored in adjacency
 # list representation.
 
+import pprint
+
 class GraphNode:
-    def __init__(self, datum=None, children=[]):
+    def __init__(self, datum=None):
         self.datum = datum
-        self.children = children
-
-    def add_child(self, child):
-        if not isinstance(child, GraphNode):
-            raise RuntimeError(f"Unsupported child type: {type(child)}")
-        if child not in self.children:
-            self.children.append(child)
-
-    def remove_child(self, child):
-        self.children.remove(child)
-
-    def get_children(self):
-        return self.children
 
     def __repr__(self):
         return self.datum if self.datum is not None else ""
@@ -26,50 +15,71 @@ class GraphNode:
 class Graph:
     allowed_graph_types = ("undirected", "directed")
 
-    def __init__(self, type='undirected', nodes={}):
-        self.nodes = nodes
+    def __init__(self, type='undirected'):
         if type not in Graph.allowed_graph_types:
             raise RuntimeError(f"Graph type {type} is not supported.")
         self.type = type
+        self.nodes = {} # dictionary of node_id(int):node_ptr(GraphNode)
+        self.adj_list = {} # dictionary of node_id(int):adjacent_nodes(set(node_id(int)))
+        self.num_nodes = 0
 
-    def add_edge(self, n1, n2):
-        self.nodes[n1].add_child(self.nodes[n2])
+    def add_edge(self, n1_id, n2_id):
+        self.adj_list[n1_id].add(n2_id)
         if self.type == "undirected":
-            self.nodes[n2].add_child(self.nodes[n1])
+            self.adj_list[n2_id].add(n1_id)
 
-    def remove_edge(self, n1, n2):
-        self.nodes[n1].remove_child(self.nodes[n2])
+    def remove_edge(self, n1_id, n2_id):
+        self.adj_list[n1_id].remove(n2_id)
         if self.type == "undirected":
-            self.nodes[n2].remove_child(self.nodes[n1])
+            self.adj_list[n2_id].remove(n1_id)
 
-    def add_node(self, name=None, datum=None, children=[]):
-        new_node = GraphNode(datum, [self.nodes[child] for child in children])
-        if name is None:
-            name = len(self.nodes.keys())+1
-        self.nodes[name] = new_node
-        if self.type == "undirected":
-            for child_name in children:
-                self.nodes[child_name].add_child(new_node)
-        return name
+    def get_edges(self, n_id):
+        return self.adj_list[n_id]
 
-    def remove_node(self, name):
-        adjacency_list = self.nodes[name].get_children()
-        for (child_name, child_pointer) in self.nodes.items():
-            if child_pointer in adjacency_list:
-                self.nodes[name].remove_child(child_pointer)
-                if self.type == "undirected":
-                    self.nodes[child_name].remove_child(self.nodes[name])
-        self.nodes.pop(name)
+    def add_node(self, datum=None):
+        new_node = GraphNode(datum)
+        n_id = self.num_nodes
+        self.num_nodes += 1
+        self.nodes[n_id] = new_node
+        self.adj_list[n_id] = set()
+        return n_id
+
+    def remove_node(self, rem_id): # removes all edges that include this node
+        for n_id in self.adj_list.keys():
+            self.adj_list[n_id].discard(rem_id)
+        self.adj_list.pop(rem_id, None)
+        self.nodes.pop(rem_id)
 
     def __repr__(self):
-        adjacency_list = f"graph_type:{self.type};\nNodes:\n"
-        for (name, node) in list(self.nodes.items()):
-            adjacency_list += f"name:{name}, datum:{repr(node)}, children:{node.get_children()};\n"
-        return adjacency_list
+        pp = pprint.PrettyPrinter(indent=4)
+        return pp.pformat(self.adj_list)
 
-# TODO: impelment basic tree
-class Tree:
-    pass
+
+class Tree(Graph):
+    def __init__(self, root=None):
+        super().__init__(type="undirected")
+        self.root = root
+
+    def add_edge(self, *args):
+        raise RuntimeError("Method 'add_edge' is not defined for Tree")
+
+    def remove_edge(self, *args):
+        raise RuntimeError("Method 'remove_edge' is not defined for Tree")
+
+    def add_node(self, datum=None, parent_id=None):
+        n_id = super().add_node(datum)
+        if self.root is None:
+            self.root=n_id
+        else:
+            # add edge to parent
+            super().add_edge(n_id,parent_id)
+        return n_id
+
+    def remove_node(self, rem_id):
+        super().remove_node(rem_id)
+        if rem_id == self.root:
+            self.root = None
+
     # TODO: implement binary tree
 
     # TODO: implement binary min heap
