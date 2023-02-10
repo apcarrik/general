@@ -8,18 +8,6 @@ type Node struct {
     Next *Node
 }
 
-// func manhattanDist(n1 *Node, n2 *Node) int {
-//     xDelta := n1.X-n2.X
-//     if xDelta < 0 {
-//         xDelta *= -1
-//     }
-//     yDelta := n1.Y-n2.Y
-//     if yDelta < 0 {
-//         yDelta *= -1
-//     }
-//     return xDelta + yDelta
-// }
-
 func inBounds(x int, y int, n int) bool {
     if x >=0 && x<n && y>=0 && y<n {
         return true
@@ -27,36 +15,6 @@ func inBounds(x int, y int, n int) bool {
     return false
 }
 
-// func manhattanSweep(w *Node, grid [][]int) int {
-//     // test concentric diamonds around w cell
-//     n := len(grid)
-//     x := w.X
-//     y := w.Y
-//     //fmt.Println("x=",x,"y=",y)
-//     for offset:=1; offset<=n+n; offset++{
-//         // check left/right/above/below corners
-//         if  (inBounds(x-offset,y,n) && grid[x-offset][y] == 1) ||
-//             (inBounds(x+offset,y,n) && grid[x+offset][y] == 1) ||
-//             (inBounds(x,y+offset,n) && grid[x][y+offset] == 1) ||
-//             (inBounds(x,y-offset,n) && grid[x][y-offset] == 1) {
-//             //fmt.Println("offset=",offset)
-//             return offset
-//         }
-
-//         // check others in diamond
-//         for xOff:=offset-1; xOff>0; xOff-- {
-//             if  (inBounds(x-xOff,y-(offset-xOff),n) && grid[x-xOff][y-(offset-xOff)] == 1) ||
-//                 (inBounds(x+xOff,y-(offset-xOff),n) && grid[x+xOff][y-(offset-xOff)] == 1) ||
-//                 (inBounds(x-xOff,y+(offset-xOff),n) && grid[x-xOff][y+(offset-xOff)] == 1) ||
-//                 (inBounds(x+xOff,y+(offset-xOff),n) && grid[x+xOff][y+(offset-xOff)] == 1) {
-//                 //fmt.Println("xOff=",xOff,"offset=",offset)
-//                 return offset
-//             }
-//         }
-//     }
-//     //fmt.Println("default")
-//     return n+n
-// }
 
 func maxDistance(grid [][]int) int {
 
