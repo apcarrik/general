@@ -1,6 +1,5 @@
 import (
     "math"
-    //"fmt"
 )
 
 func shipWithinDays(weights []int, days int) int {
@@ -23,15 +22,20 @@ func shipWithinDays(weights []int, days int) int {
         minShipCapacity = maxWeight
     }
 
-    // Continually increase minShipCapacity by 1 until all weights will ship
-    for minShipCapacity < totalWeight {
+    // Optimization: use binary search instead, between minShipCapacity and maxWeight to find lowest minShipCapacity that will ship all items
+    low := minShipCapacity
+    mid := low
+    high := totalWeight
+    canShip := true
+    for low < high {
+        mid = (high-low)/2 + low
+
+        // check if mid can ship
         daysToShip := 1
         shipWeight := 0
-        //fmt.Println("minShipCapacity=",minShipCapacity)
         for _,weight := range weights {
             shipWeight += weight
-            if shipWeight > minShipCapacity {
-                //fmt.Println(">Ship can hold through index:",i)
+            if shipWeight > mid {
                 daysToShip++
                 shipWeight = weight
             }
@@ -39,11 +43,22 @@ func shipWithinDays(weights []int, days int) int {
                 break
             }
         }
-        //fmt.Println("Days to ship:", daysToShip)
+
+        // change low or high bounds and canShip flag
         if daysToShip <= days{
-            break
+            canShip = true
+            high = mid
+        } else {
+            canShip = false
+            low = mid +1
         }
-        minShipCapacity += 1
+    }
+
+    // return correct minShipCapacity based on canShip flag
+    if canShip {
+        minShipCapacity = mid
+    } else {
+        minShipCapacity = mid + 1
     }
     return minShipCapacity
 
