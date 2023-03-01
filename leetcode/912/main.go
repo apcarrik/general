@@ -5,26 +5,8 @@ func mergeSort(numsPtr *[]int, min, max int) {
     mid := (max-min)/2+min
 
     // Stop dividing and sort when max is < 3 away from min
-    if max-min < 3 {
-        switch max-min {            
-        case 2:
-            switch {
-            case nums[min] > nums[min+1] && nums[min] > nums[max]:
-                if nums[min+1] > nums[max] {
-                    (*numsPtr)[min], (*numsPtr)[min+1], (*numsPtr)[max] = (*numsPtr)[max], (*numsPtr)[min+1], (*numsPtr)[min]
-                } else {
-                    (*numsPtr)[min], (*numsPtr)[min+1], (*numsPtr)[max] = (*numsPtr)[min+1], (*numsPtr)[max], (*numsPtr)[min]
-                }
-            case nums[min] > nums[min+1] && nums[min] < nums[max]:
-                (*numsPtr)[min], (*numsPtr)[min+1], (*numsPtr)[max] = (*numsPtr)[min+1], (*numsPtr)[min], (*numsPtr)[max]
-            case nums[min] < nums[min+1] && nums[min] > nums[max]:
-                (*numsPtr)[min], (*numsPtr)[min+1], (*numsPtr)[max] = (*numsPtr)[max], (*numsPtr)[min], (*numsPtr)[min+1]
-            case nums[min] < nums[min+1] && nums[min] < nums[max]:
-                if nums[min+1] > nums[max] {
-                    (*numsPtr)[min], (*numsPtr)[min+1], (*numsPtr)[max] = (*numsPtr)[min], (*numsPtr)[max], (*numsPtr)[min+1]
-                }
-            }
-            return
+    if max-min < 1 {
+        switch max-min {   
         case 1:
             if nums[max] < nums[min] {
                 (*numsPtr)[min], (*numsPtr)[max] = (*numsPtr)[max], (*numsPtr)[min]
