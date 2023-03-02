@@ -3,19 +3,7 @@ func compress(chars []byte) int {
 
     start, end := 0,1
     retStrLen := 0
-    digitMap := map [byte]byte{
-        '\u0000': '0',
-        '\u0001': '1',
-        '\u0002': '2',
-        '\u0003': '3',
-        '\u0004': '4',
-        '\u0005': '5',
-        '\u0006': '6',
-        '\u0007': '7',
-        '\u0008': '8',
-        '\u0009': '9',
-    } 
-
+    
     for end <= len(chars) {
         if end == len(chars) || chars[start] != chars[end] {
             // update character
@@ -34,7 +22,7 @@ func compress(chars []byte) int {
 
                 // Place digits on nums
                 for i:=charCountDigits; i>0; i-- {
-                    chars[retStrLen+i] = digitMap[string( charCount % 10 )[0]]
+                    chars[retStrLen+i] = string( charCount % 10 )[0] + 48
                     charCount /= 10
                 }
 
