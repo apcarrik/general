@@ -4,7 +4,25 @@ type MatchNode struct {
     Prev *MatchNode
 }
 
-func removeMatch(match, matchesHead *MatchNode) ( *MatchNode,  *MatchNode) {    
+func addMatch(newIdx int, matchesHead, matchesTail *MatchNode) (*MatchNode, *MatchNode) {
+    if matchesHead == nil {
+        matchesHead = &MatchNode{
+            Index: newIdx,
+        }
+        matchesTail = matchesHead
+    } else {
+        matchesTail.Next = &MatchNode{
+            Index: newIdx,
+            Prev: matchesTail,
+        }
+        matchesTail = matchesTail.Next
+    }
+
+    return matchesHead, matchesTail
+
+}
+
+func removeMatch(match, matchesHead *MatchNode) *MatchNode {    
     // remove match from matches
     if match == matchesHead {
         matchesHead = matchesHead.Next
@@ -17,8 +35,10 @@ func removeMatch(match, matchesHead *MatchNode) ( *MatchNode,  *MatchNode) {
             match.Next.Prev = match.Prev
         }
     }
-    return match, matchesHead
+    return matchesHead
 }
+
+
 
 func strStr(haystack string, needle string) int {
     // Idea: loop through each rune of needle. For each needle rune, record indicies of all matches of substrings that include all needle runes upto and including this needle rune until you reach the end. Then, find the first index of matching substrings. Note that the number of matches will be weakly decreasing for each iteration of needle rune.
@@ -33,18 +53,7 @@ func strStr(haystack string, needle string) int {
             matchesTail := matchesHead
             for hRuneIdx, hRune := range hRunes {
                 if hRune == nRune {
-                    if matchesHead == nil {
-                        matchesHead = &MatchNode{
-                            Index: hRuneIdx,
-                        }
-                        matchesTail = matchesHead
-                    } else {
-                        matchesTail.Next = &MatchNode{
-                            Index: hRuneIdx,
-                            Prev: matchesTail,
-                        }
-                        matchesTail = matchesTail.Next
-                    }
+                    matchesHead, matchesTail = addMatch(hRuneIdx, matchesHead, matchesTail)
                 }
             }
         } else {
@@ -53,10 +62,10 @@ func strStr(haystack string, needle string) int {
                 if matchIdx + nRuneIdx < len(hRunes){
                     hRune := hRunes[matchIdx + nRuneIdx]
                     if hRune != nRune {
-                        match, matchesHead = removeMatch(match, matchesHead)
+                        matchesHead = removeMatch(match, matchesHead)
                     }
                 } else {
-                    match, matchesHead = removeMatch(match, matchesHead)
+                    matchesHead = removeMatch(match, matchesHead)
                 }
             }
         }
