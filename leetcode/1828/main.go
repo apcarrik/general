@@ -5,11 +5,31 @@
 *
 *   Idea: Store points in map with x value as key and list of y coordinates as value. For each query, search
 *   all x coordinates that could fall within the circle and search all y coordinates within those.
+*   
+*   Optimization: Perform binary search on y values to find range suitable for match. Requires sorting y values
 */
 
 import (
     "math"
+    "sort"
 )
+
+func binarySearch(listPtr *[]int, x int) int {
+    list := *listPtr
+    low := 0
+    high := len(list)
+    for high > low {
+        mid := (high-low)/2 + low
+        switch {
+            case list[mid] >= x:
+                high = mid-1
+            case list[mid] < x:
+                low = mid+1
+        }
+    }
+    return low
+
+}
 
 func distance(p1, p2 [2]int) float64 {
     deltaX := p1[0]-p2[0]
@@ -36,16 +56,36 @@ func countPoints(points [][]int, queries [][]int) []int {
         pointsMap[xi] = append(pointsMap[xi], yi)
     }
 
-    // Go through queries, for each searching any x coordinates in pointsMap that could be within the circle
+    // Sort all y cordinates in pointsMap
+    for x,_ := range pointsMap {
+        sort.Ints(pointsMap[x])
+    }
+
+    // Create sorted list of x values
+    xList := []int{}
+    for k,_ := range pointsMap {
+        xList = append(xList, k)
+    }
+    sort.Ints(xList)
+
+    // Go through queries, searching for coordinates that could fit within (x,y) bounds of query circle
     pointsInside := []int{}
     for j,query := range queries {
         xj := query[0]
         yj := query[1]
         rj := query[2]
         pointsInside = append(pointsInside,0)
-        for x := xj - rj; x <= xj + rj; x++ {
-            if _,ok := pointsMap[x]; ok {
-                for _,y := range pointsMap[x] {
+        // Binary search for x search range
+        for xIdx := binarySearch(&xList,xj-rj);
+            xIdx < len(xList) && xList[xIdx] <= xj+rj;
+            xIdx++ {
+            x := xList[xIdx]
+            if ys,ok := pointsMap[x]; ok && len(ys) > 0 {
+                // Binary search for y search range  
+                for yIdx := binarySearch(&ys,yj-rj);
+                    yIdx < len(ys) && ys[yIdx] <= yj+rj;
+                    yIdx++ {
+                    y := ys[yIdx]
                     if distance([2]int{x,y}, [2]int{xj,yj}) <= float64(rj) {
                         pointsInside[j]++
                     }
