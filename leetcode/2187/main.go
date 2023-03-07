@@ -1,16 +1,13 @@
-/* Notes
-    - bus with shortest trip time will be limiting factor
-    - max trip time would be totalTrips*shortestBusTripTime
-    - Idea: could I use binary search to search between 1 and totalTrips for the shortest bus trip time increments and see if total trips of all busses in that time interval are > totalTrips
-        - calculating trips for every bus will be O(n) for n busses, and binary search takes O(n) time
-    - It is too slow. Is there a better way to speed this up?
-        - Idea: find average trip time and divide total time by that
+/*  Idea: Find a good approximation for the answer to get us in the "ballpark." Then, use binary search to search
+    between max/min ballpark values and check if total trips of all busses in that time interval are > totalTrips.
 
+    Note: Repeated attempts found that a min factor of 0.9 and max factor of 1.1 worked for most test cases, but 
+    there were some low-valued test cases this didn't work for (i.e. case [9,3,10,5] and totalTime=2), so the
+    last section is a last-ditch effort to search in increments of 1 if binary search didn't work.
 */
 
 import (
     "math"
-    //"fmt"
 )
 func getTripsCompleted(tripTimesPtr *[]int, totalTime int) int {
     tripTimes := *tripTimesPtr
@@ -44,18 +41,14 @@ func minimumTime(tripTimes []int, totalTrips int) int64 {
         }
     }
 
-    avgTripPerMinTripTime := getAvgTripsPerMinTripTime(&tripTimes, float64(minTripTime))
-    //fmt.Println(getTripsCompleted(&tripTimes, 3))
-    //fmt.Println(getTripsCompleted(&tripTimes, 4))
-    //fmt.Println(getTripsCompleted(&tripTimes, 5))
     // perform binary search to find minimum total time to achieve totalTrips over all busses
+    // note the 0.9 and 1.1 factors because min/max times are approximations
+    avgTripPerMinTripTime := getAvgTripsPerMinTripTime(&tripTimes, float64(minTripTime))
     minTime := int( math.Floor(float64(totalTrips) / avgTripPerMinTripTime)*0.9 )*minTripTime
     maxTime := int( math.Ceil(float64(totalTrips) / avgTripPerMinTripTime)*1.1  )*minTripTime
-    //fmt.Println(minTripTime, avgTripPerMinTripTime, minTime, maxTime, getTripsCompleted(&tripTimes, minTime),getTripsCompleted(&tripTimes, maxTime))
     for maxTime > minTime {
         medianTime := (maxTime - minTime)/2 + minTime
         numTripsCompleted := getTripsCompleted(&tripTimes, medianTime)
-        //fmt.Println(medianTime, numTripsCompleted)
         if numTripsCompleted >= totalTrips {
             maxTime = medianTime
         } else {
