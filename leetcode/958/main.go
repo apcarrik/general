@@ -10,56 +10,42 @@
 
 /* Notes:
     - the array notation for a tree makes it easy to identify where it goes wrong, i.e. if a null exists in the array at all means that there is another element to the right of it.
-    - Idea: traverse like you were making the array representation of the binary tree. Keep a queue of nodes to visit and add children of nodes from left to right so it is in order. Also keep an array of each node's layer height. If you come across a null node, add it to array with value equal to the negative of the layer height. Ensure that all negative values are within 1 to ensure the heights of all null children are within 1.
+    - Idea: traverse like you were making the array representation of the binary tree. Keep a queue of nodes to visit and add children of nodes from left to right so it is in order. Also keep an array of all nodes visitied, indicating if that node was null or not. In the end, ensure that no non-null nodes come after null nodes
 
 
 */
 
-type layerNode struct {
-    layer int
-    node *TreeNode
-}
-
 func isCompleteTree(root *TreeNode) bool {
-    layers := []int{}    
-    for q := []*layerNode{&layerNode{layer: 0, node: root}}; len(q) > 0; q = q[1:]{
-        layer := q[0].layer + 1
-        node := q[0].node
+    nullNodes := []bool{}    
+    for q := []*TreeNode{root}; len(q) > 0; q = q[1:]{
+        node := q[0]
         if node.Left == nil {
-            layers = append(layers, 0-layer)        
+            nullNodes = append(nullNodes, true)        
         } else {
-            // add to q and layers
-            layers = append(layers, layer)
-            q = append(q, &layerNode{layer: layer, node: node.Left})
+            // add to q and nullNodes
+            nullNodes = append(nullNodes, false)
+            q = append(q, node.Left)
         }
         if node.Right == nil {
-            layers = append(layers, 0-layer)       
+            nullNodes = append(nullNodes, true)       
         } else  {
-            // add to q and layers
-            layers = append(layers, layer)
-            q = append(q, &layerNode{layer: layer, node: node.Right})
+            // add to q and nullNodes
+            nullNodes = append(nullNodes, false)
+            q = append(q,node.Right)
         }
     }
 
-    // Go through layers, making sure all negative layers are within 1 of each other
-    minLayer := 0
-    maxLayer := -100
-    negativeSeen := false
-    for _,layer := range layers {
-        if layer >= 0 && negativeSeen == true {
+    // Go through nullNodes, ensuring no non-null nodes come after null nodes
+    nullSeen := false
+    for _,nodeIsNull := range nullNodes {
+        if !nodeIsNull && nullSeen == true {
             return false
         }
-        if layer < 0 {
-            negativeSeen = true
-            if layer < minLayer {
-                minLayer = layer
-            }
-            if layer > maxLayer {
-                maxLayer = layer
-            }
+        if nodeIsNull {
+            nullSeen = true
         }
     }
 
-    return maxLayer - minLayer <= 1
+    return true
     
 }
