@@ -9,12 +9,18 @@
 
 func canPlaceFlowers(flowerbed []int, n int) bool {
 
-    // pad beginning and end of flowerbed
-    flowerbed = append(append([]int{1,0}, flowerbed...), []int{0,1}...)
-
     flowerSpots := 0
-    emptyStart := -1
-    for i,plot := range flowerbed {
+    emptyStart := 1
+    for i:=2; i<len(flowerbed)+4; i++ {
+        var plot int
+        switch i {
+            case len(flowerbed)+2:
+                plot = 0
+            case len(flowerbed)+3:
+                plot = 1
+            default:
+                plot = flowerbed[i-2]
+        }
         if plot == 0 {
             if emptyStart == -1 {
                 emptyStart = i
