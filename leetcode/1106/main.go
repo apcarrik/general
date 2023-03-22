@@ -6,19 +6,13 @@
     - first character of expression will tell you what operator is
         - question: can first char be 't' or 'f' and have any subexpression? A:no
     - when parsing arguments, need to count parenthesis to not inaverdantly count recursive commas
+    - optimization: after recieving args list from parseArgs, do a quick check to see if it is a single 't'/'f' value and return that value instead of recursivley calling parseBoolExpr again.
 
 */
 
 func parseArgs(expression string) []string {
     // input is a set of comma separated arguments, and output is array where each index is a separate argument as a string
     args := []string{}
-
-    // // edge case: first char in expression is operator, so we know this will be one operator
-    // switch expression[0] {
-    //     case '!', '&', '|':
-    //         return []string{expression}
-    // }
-    // isolate args separated by commas
     argStart := -1
     openParens := 0
     for i,c := range expression {
@@ -37,14 +31,6 @@ func parseArgs(expression string) []string {
                 argStart = i
             }
         }
-        // if c == ',' {
-        //     args = append(args, expression[argStart:i])
-        //     argStart = -1
-        // } else {
-        //     if argStart == -1 {
-        //         argStart = i
-        //     }
-        // }
 
     }
     // edge cases
@@ -61,34 +47,42 @@ func parseArgs(expression string) []string {
 
 func parseBoolExpr(expression string) bool {
 
-    result := false
-
     // Find expression operator and operands
-    args := []string{}
     switch expression[0] {
         case 't':
-            result = true
+            return true
         case 'f':
-            result = false
+            return false
         case '!':
-            args = parseArgs(expression[2:len(expression)-1])
-            result = !parseBoolExpr(args[0])            
+            if len(expression) == 4 { // optimization
+                return expression[2] == 'f' 
+            } else {
+                return !parseBoolExpr(expression[2:len(expression)-1])
+            }                        
         case '&':
-            args = parseArgs(expression[2:len(expression)-1])
-            result = true
-            for _,arg := range args {
-                result = result && parseBoolExpr(arg)
+            args := parseArgs(expression[2:len(expression)-1])
+            if len(args) == 1 && len(args[0]) == 1 { // optimization
+                return args[0][0] == 't' 
+            } else {
+                result := true
+                for _,arg := range args {
+                    result = result && parseBoolExpr(arg)
+                }
+                return result
             }
         case '|':
-            args = parseArgs(expression[2:len(expression)-1])
-            result = false
-            for _,arg := range args {
-                result = result || parseBoolExpr(arg)
+            args := parseArgs(expression[2:len(expression)-1])
+            if len(args) == 1 && len(args[0]) == 1 { // optimization
+                return args[0][0] == 't' 
+            } else {
+                result := false
+                for _,arg := range args {
+                    result = result || parseBoolExpr(arg)
+                }
+                return result
             }
     }
 
-
-    // Return result
-    return result
+    return false
         
 }
