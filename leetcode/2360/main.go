@@ -1,3 +1,10 @@
+func updateNodes(len int, cycleLenPtr *[]int, nodeMapPtr *map[int]int) {
+	for k,_ := range *nodeMapPtr {
+		(*cycleLenPtr)[k] = len
+	}
+	return
+}
+
 func longestCycle(edges []int) int {
 	cycleLen := []int{}
 
@@ -7,22 +14,24 @@ func longestCycle(edges []int) int {
   }	
 
 	// iterate through edges
-	for i,node := range edges {
+	for _,node := range edges {
 		// find cycle length of this edge, and which element starts cycle
 		nodeMap := map[int]int{} // k:nodeID, v: iteration seen
 		for iter:=0; iter<=len(edges); iter++ {
 			if node == -1 {
-				cycleLen[i] = 0
+				// optimization: update everything in this nodes path
+				updateNodes(0, &cycleLen, &nodeMap)
 				break
 			}
 			if cycleLen[node] != -1 {
-				cycleLen[i] = cycleLen[node]				
+				// optimization: update everything in this nodes path
+				updateNodes(cycleLen[node], &cycleLen, &nodeMap)			
 				break
 			}
 			if _,ok := nodeMap[node]; ok {
 				// found loop
-				cycleLen[node] = iter - nodeMap[node]
-				cycleLen[i] = cycleLen[node]
+				// optimization: update everything in this nodes path
+				updateNodes(iter - nodeMap[node], &cycleLen, &nodeMap)
 				break
 			} else {
 					nodeMap[node] = iter	
