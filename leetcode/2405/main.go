@@ -1,15 +1,15 @@
 func partitionString(s string) int {
-	chars := [26]int{}
+	chars := [26]bool{}
 	subs := 1
 	for i:=0; i<len(s); i++ {
 		ci := s[i]-97
-		if chars[ci] > 0 {
+		if chars[ci] {
 			subs++
 			for i := range chars {
-				chars[i] = 0
+				chars[i] = false
 			}
 		}
-		chars[ci]++		
+		chars[ci] = true		
 	}
 	return subs
 }
