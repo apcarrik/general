@@ -2,4 +2,4 @@
 SELECT *
 FROM Patients
 WHERE 
-	conditions REGEXP '^DIAB1.*' OR conditions REGEXP '.* DIAB1.*'
+	conditions REGEXP '^DIAB1| DIAB1'
