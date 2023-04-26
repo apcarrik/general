@@ -1,4 +1,4 @@
-import os, binascii
+import random
 
 class Codec:
 
@@ -9,8 +9,9 @@ class Codec:
 		self.short_to_long: Dict[str,str] = {}
 
 	def _create_short_url(self) -> string:
-		shortURL: str = binascii.b2a_hex(os.urandom(self._short_len))		
-		return shortURL
+		short_url: str = '%x' % random.randrange(16**self._short_len)	
+		print(short_url)
+		return short_url
 
 	def encode(self, long_url: string) -> string:
 		if long_url not in self.long_to_short:
