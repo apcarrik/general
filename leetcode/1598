@@ -1,0 +1,18 @@
+func minOperations(logs []string) int {
+    // Idea: folder changes can be modeled as tree, with main as root. Construct path from root to current folder, not worrying about any other child paths.
+
+    filepath := []string{""}
+    for _,log := range logs{
+        switch log {
+            case "../": // move to parent
+                if len(filepath) > 1 {
+                    filepath = filepath[:len(filepath)-1]
+                }
+            case "./": // do nothing
+                continue
+            default: // move to child folder who's name is given
+                filepath = append(filepath,log[:len(log)-1])
+        }
+    }
+    return len(filepath)-1
+}
