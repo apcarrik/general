@@ -1,10 +1,14 @@
-from heapq import nlargest
-
 class Solution:
-  def _getN1s(n1FreqMap: Dict[int, int], k: int) -> int:
-    n1s = 0
-    # TODO
-    return n1s
+  def _getN1Sum(self, n1FreqMap: Dict[int, int], k: int) -> int:
+    n1Sum: int = 0
+    for n1Key, n1Val in sorted(n1FreqMap.items(), reverse=True):
+      if n1Val >= k:
+        n1Sum += n1Key * k
+        break
+      else:
+        n1Sum += n1Key * n1Val
+        k -= n1Val
+    return n1Sum
 
   def maxScore(self, nums1: List[int], nums2: List[int], k: int) -> int:
 
@@ -17,7 +21,7 @@ class Solution:
         n1FreqMap[num1] = 1
 
 
-    # Create n2Map
+    # Create n2Map (with frequency map of n1 values as value)
     n2Map: Dict[int, Dict[int,int]] = {}
     for i, num2 in enumerate(nums2):
       if num2 in n2Map:
@@ -27,21 +31,25 @@ class Solution:
           n2Map[num2][nums1[i]] = 1
       else:
         n2Map[num2] = {nums1[i]: 1}
-
+				
     # Find max score using smallest n2 while there are at least k elements in nums1
     globalMaxScore: int = 0
     nums1Len = len(nums1)
     while nums1Len >= k:
-      n2: int = min(n2Map)
-      n1s: int = self._getN1s(n1FreqMap, k)
-      localMaxScore: int = sum(n1s)*n2
+      n2Min: int = min(n2Map)
+      n1Sum: int = self._getN1Sum(n1FreqMap, k)
+      localMaxScore: int = n1Sum*n2Min
       if localMaxScore > globalMaxScore:
         globalMaxScore = localMaxScore
 
       # clean up for next loop iteration 
-      # TODO: update this
-      for n1Val in n2Map[n2]:
-        nums1.remove(n1Val)
-      del n2Map[n2]
+      for n1Key, n1Val in n2Map[n2Min].items():
+        if n1FreqMap[n1Key] == n1Val:
+          nums1Len -= n1FreqMap[n1Key]
+          del n1FreqMap[n1Key]
+        else:
+          nums1Len -= n1Val
+          n1FreqMap[n1Key] -= n1Val
+      del n2Map[n2Min]
 
     return globalMaxScore
