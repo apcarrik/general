@@ -1,7 +1,7 @@
 class MyHashSet:
 	def __init__(self):
 		# decide how large array will be
-		self.size = 500000
+		self.size = 5000
 		self.hashTable = [None] * self.size
 
 	def getHashValue(self, key: int) -> int:
