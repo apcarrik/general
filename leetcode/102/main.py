@@ -4,14 +4,16 @@
 #         self.val = val
 #         self.left = left
 #         self.right = right
+
+from collections import deque
 class Solution:
     def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
         if root is None:
             return []
         ret: list[list[int]] = []
-        q: list[tuple[int,TreeNode]] = [(0,root)]
+        q: Deque[tuple[int,TreeNode]] = deque([(0,root)])
         while len(q) > 0:
-            (layer, node) = q.pop(0) # O(n) operation!
+            (layer, node) = q.popleft()
             # add this to ret
             if len(ret)-1 < layer:
                 ret.append([node.val])
