@@ -5,7 +5,7 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def pathSum(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]:
+    def pathSumRec(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]:
         ret: list[list[int]] = []
         if root is not None:
             if root.left is None and root.right is None:
@@ -14,17 +14,23 @@ class Solution:
                     ret.append([root.val])
             else:
                 # nonleaf
-                left_list: list[list[int]] = self.pathSum(root=root.left, targetSum=targetSum-root.val)
+                left_list: list[list[int]] = self.pathSumRec(root=root.left, targetSum=targetSum-root.val)
                 if len(left_list) > 0:
                     for list in left_list:
-                        list.insert(0,root.val)
+                        list.append(root.val)
 
-                right_list: list[list[int]] = self.pathSum(root=root.right, targetSum=targetSum-root.val)
+                right_list: list[list[int]] = self.pathSumRec(root=root.right, targetSum=targetSum-root.val)
                 if len(right_list) > 0:
                     for list in right_list:
-                        list.insert(0,root.val)
+                        list.append(root.val)
 
                 # merge left and right lists
                 ret = left_list + right_list
         
+        return ret
+    def pathSum(self, root: TreeNode, targetSum: int) -> list[list[int]]:
+        ret: list[list[int]] = self.pathSumRec(root= root, targetSum=targetSum)
+        if len(ret) > 0:
+            for l in ret:
+                l.reverse()
         return ret
