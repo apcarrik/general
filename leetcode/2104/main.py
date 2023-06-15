@@ -2,14 +2,12 @@ class Solution:
     def subArrayRanges(self, nums: List[int]) -> int:
         sum: int = 0
         for i in range(0,len(nums)-1):
-            min: list[int] = []
-            max: list[int] = []
-            heapq.heapify(min)
-            heapq.heapify(max)
-            heapq.heappush(min, nums[i])
-            heapq.heappush(max, -1*nums[i])
+            min: int = nums[i]
+            max: int = nums[i]
             for j in range(i+1,len(nums)):
-                heapq.heappush(min, nums[j])
-                heapq.heappush(max, -1*nums[j])
-                sum += (-1*max[0])-min[0]
+                if nums[j] < min:
+                    min = nums[j] 
+                elif nums[j] > max:
+                    max = nums[j] 
+                sum += max-min
         return sum
