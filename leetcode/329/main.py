@@ -1,6 +1,5 @@
 # class Solution:
 #     def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
-
 class Solution:
     def dfs(self, r: int, c: int) -> int:
         # check if this cell's longest has been set
@@ -36,8 +35,11 @@ class Solution:
 
         self.longest: list[list[int]] = [[-1 for _ in range(self.cols)] for _ in range(self.rows)]
 
-        for r in range(self.rows):
-            for c in range(self.cols):
-                # find longest path for cell
-                self.longest[r][c] = self.dfs(r=r, c=c)
+        largest: list[tuple[int,int,int]] = \
+          sorted([(self.matrix[r][c], r, c) for c in range(self.cols) for r in range(self.rows)], reverse=True)
+
+        for tup in largest:
+              _, r, c = tup
+              # find longest path for cell
+              self.longest[r][c] = self.dfs(r=r, c=c)
         return max(map(max, self.longest))+1
