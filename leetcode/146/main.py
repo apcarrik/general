@@ -1,19 +1,17 @@
-import heapq
+from collections import deque
 class LRUCache:
 
     def __init__(self, capacity: int):
         self.capacity: int = capacity
         self.lookup: dict[int, int] = {}
         self.freq: dict[int, int] = {}
-        self.mh: list[tuple[int, int]] = []
-        self.timestamp = 0
+        self.dq: deque[int] = deque([])
         
 
     def get(self, key: int) -> int:
         if key in self.lookup:
             self.freq[key] += 1
-            heapq.heappush(self.mh, (timestamp, key))
-            timestamp += 1
+            self.dq.append(key)
             return self.lookup[key]
         else:
             return -1
@@ -22,11 +20,19 @@ class LRUCache:
     def put(self, key: int, value: int) -> None:
         if key in self.lookup:
             self.freq[key] += 1
-            heapq.heappush(self.mh, (timestamp, key))
-            timestamp += 1
-            self.lookup[key] = value
         else:
-            pass # todo
+            if len(self.lookup) == self.capacity:
+                while len(self.dq) > 0:
+                    minkey = self.dq.popleft()
+                    self.freq[minkey] -= 1
+                    if self.freq[minkey] == 0:
+                        del self.freq[minkey]
+                        del self.lookup[minkey]
+                        break
+            self.freq[key] = 1
+        self.dq.append(key)
+        self.lookup[key] = value
+                
 
         
 
